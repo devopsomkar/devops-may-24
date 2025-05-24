@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+
+    environment {
+        AWS_REGION = 'us-east-1'
+        ECR_REPO_NAME = 'my-repo'
+        IMAGE_TAG = 'latest'
+       
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Login to ECR') {
+            steps {
+                script {
+                    sh '''
+                    
+                    docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+                    '''
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh '''
+                    docker build -t $ECR_REPO_NAME:$IMAGE_TAG .
+                    
+                    '''
+                }
+            }
+        }
+
+
+   
